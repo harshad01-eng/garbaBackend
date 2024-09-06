@@ -14,4 +14,6 @@ public interface RegistService {
 
     List<RegistDto> getAllData();
 
+     byte[] downloadPdfById(Long id) throws Exception;
+
 }

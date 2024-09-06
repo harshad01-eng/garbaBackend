@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +18,8 @@ import com.example.garba.dto.RegistDto;
 import com.example.garba.service.RegistService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+
 
 
 
@@ -63,6 +68,24 @@ public class RegistController {
         return new ResponseEntity<>(registDtos, HttpStatus.OK);
 
     }
+
+    @GetMapping("/getPdf/{id}")
+    public ResponseEntity<byte[]> downloadPdfById(@PathVariable Long id) throws Exception{
+
+        try{
+        byte[] pdf = registService.downloadPdfById(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "userDetails.pdf");
+
+        return ResponseEntity.ok().headers(headers).body(pdf);
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new Exception("Error while retrieving PDF", e);
+        }
+    }
+    
     
     
     
