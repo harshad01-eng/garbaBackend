@@ -16,7 +16,8 @@ public class RegistMapper {
             registDto.getBatchTime(),
             registDto.getAddress(),
             registDto.getRegsNo(),
-            registDto.getPayment()
+            registDto.getPayment(),
+            registDto.getPhoto()
         );
 
         return registration;
@@ -33,7 +34,8 @@ public class RegistMapper {
             registration.getBatchTime(),
             registration.getAddress(),
             registration.getRegsNo(),
-            registration.getPayment()
+            registration.getPayment(),
+            registration.getPhoto()
         );
         return registDto;
     }

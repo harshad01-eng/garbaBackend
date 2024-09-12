@@ -11,8 +11,10 @@ import org.springframework.http.HttpHeaders;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.garba.dto.RegistDto;
 import com.example.garba.service.RegistService;
@@ -34,9 +36,16 @@ public class RegistController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegistDto> registerDetail(@RequestBody RegistDto registDto) {
-        return new ResponseEntity<>(registService.registerDetail(registDto), HttpStatus.CREATED);
-    }
+    public ResponseEntity<RegistDto> registerDetail(  @RequestPart("registDto") RegistDto registDto, 
+        @RequestPart(value = "photo", required = false) MultipartFile photo)  {
+            try {
+                RegistDto result = registService.registerDetail(registDto, photo);
+                return new ResponseEntity<>(result, HttpStatus.CREATED);
+            } catch (Exception e) {
+                // Log the exception (this is important for debugging)
+                // logger.error("Error during registration", e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }    }
 
     @GetMapping("/detail/{mobileNo}")
     public  ResponseEntity<List<RegistDto>> findByMobileNo(@PathVariable String mobileNo) {

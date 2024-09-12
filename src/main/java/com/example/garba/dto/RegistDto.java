@@ -26,4 +26,6 @@ public class RegistDto {
     private String regsNo;
 
     private String payment;
+
+    private byte[] photo;
 }

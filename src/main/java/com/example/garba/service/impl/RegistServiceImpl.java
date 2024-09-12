@@ -1,12 +1,14 @@
 package com.example.garba.service.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.garba.dto.RegistDto;
 import com.example.garba.entity.Registration;
@@ -15,7 +17,7 @@ import com.example.garba.mapper.RegistMapper;
 import com.example.garba.repository.RegistRepository;
 import com.example.garba.service.RegistService;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.ColumnText;
+// import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfGState;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -32,11 +34,29 @@ public class RegistServiceImpl implements RegistService {
     }
 
     @Override
-    public RegistDto registerDetail(RegistDto registDto) {
+    public RegistDto registerDetail(RegistDto registDto, MultipartFile photo) {
         if(registRepository.existsByMobileNo(registDto.getMobileNo()) && registDto.getId()==0){
             throw new MobileNumberAlreadyExistsException("Mobile number is already registered");
         }
         Registration registration = RegistMapper.mapToRegistration(registDto);
+        if(photo != null && !photo.isEmpty()){
+            try {
+                registration.setPhoto(photo.getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to process the photo", e);
+            }
+        }else {
+            Optional<Registration> existRegistration = registRepository.findById(registDto.getId());
+
+            if(existRegistration.isPresent()){
+                registration.setPhoto(existRegistration.get().getPhoto());
+            } else {
+              // If the record is not found, you can either throw an exception
+              // or return null, depending on your design choice.
+              throw new NoSuchElementException("No registration found with ID: " + registDto.getId());
+          }
+
+        }
         Registration savRegistration = registRepository.save(registration);
         if(registDto.getId() == 0){
             String  regsNo = String.valueOf(savRegistration.getId() + 100);
@@ -94,7 +114,7 @@ public class RegistServiceImpl implements RegistService {
         if(registration.isPresent()){
 
             Registration user = registration.get();
-            Rectangle pagesSize = new Rectangle(300,400);
+            Rectangle pagesSize = new Rectangle(300,450);
            
             Document document = new Document(pagesSize);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -103,7 +123,7 @@ public class RegistServiceImpl implements RegistService {
             document.open();
             PdfContentByte border = writer.getDirectContent();
            
-            border.setColorStroke(new BaseColor(51,102,0));
+            border.setColorStroke(new BaseColor(0,153,153));
             border.setLineWidth(20f);
             border.rectangle(pagesSize.getLeft() + 10,
                              pagesSize.getBottom() + 10,
@@ -113,8 +133,8 @@ public class RegistServiceImpl implements RegistService {
 
             PdfContentByte border2 = writer.getDirectContent();
            
-            border2.setColorStroke(new BaseColor(128,255,0));
-            border2.setLineWidth(2f);
+            border2.setColorStroke(new BaseColor(253,101,101));
+            border2.setLineWidth(11.5f);
             border2.rectangle(pagesSize.getLeft() + 14,
                              pagesSize.getBottom() + 14,
                              pagesSize.getWidth() - 28,   // Width (reduce by 20 for padding)
@@ -126,35 +146,51 @@ public class RegistServiceImpl implements RegistService {
            
             PdfContentByte canvas = writer.getDirectContentUnder();
 
-            canvas.setColorFill(new BaseColor(213,252,199));
+            canvas.setColorFill(new BaseColor(253,233,214));
             canvas.rectangle(0, 0, pagesSize.getWidth(), pagesSize.getHeight());
             canvas.fill();
                  PdfGState gs = new PdfGState();
-        gs.setFillOpacity(0.7f); // Set opacity (0.1 is very transparent, 1.0 is fully opaque)
+        gs.setFillOpacity(0.4f); // Set opacity (0.1 is very transparent, 1.0 is fully opaque)
         canvas.setGState(gs);
-            Image watermark = Image.getInstance("src/assets/garbaIcon.png");
-            watermark.setAbsolutePosition(0, 120); // Position the image
+            Image watermark = Image.getInstance("src/assets/udaanLogo.png");
+            watermark.setAbsolutePosition(0, 80); // Position the image
         watermark.scaleAbsolute(300, 200); // Scale the image if needed
         canvas.addImage(watermark);
 
-        PdfGState texts = new PdfGState();
-        texts.setFillOpacity(0.2f); // Set opacity (0.1 is very transparent, 1.0 is fully opaque)
-        canvas.setGState(texts);
-            Font watermarkFont = new Font(Font.FontFamily.HELVETICA,70,Font.BOLD, BaseColor.GREEN);
-            ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, new Paragraph("UDAAN", watermarkFont)
-                                        , document.getPageSize().getWidth()/2
-                                        , document.getPageSize().getHeight()/2, 0);
+        // PdfGState texts = new PdfGState();
+        // texts.setFillOpacity(0.2f); // Set opacity (0.1 is very transparent, 1.0 is fully opaque)
+        // canvas.setGState(texts);
+        //     Font watermarkFont = new Font(Font.FontFamily.HELVETICA,70,Font.BOLD, BaseColor.GREEN);
+        //     ColumnText.showTextAligned(canvas, Element.ALIGN_CENTER, new Paragraph("UDAAN", watermarkFont)
+        //                                 , document.getPageSize().getWidth()/2
+        //                                 , document.getPageSize().getHeight()/2, 0);
 
             //Add custom title Header
-            Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 26, Font.BOLD, BaseColor.MAGENTA );
+            Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 26, Font.BOLD, new BaseColor(102,0,204) );
             Chunk titleChunk = new Chunk("UDAAN GARBA", titleFont);
-            titleChunk.setUnderline(new BaseColor(153,0,153), 3f, 0, -4f, 0, 0);
+            titleChunk.setUnderline(new BaseColor(51,0,102), 3f, 0, -4f, 0, 0);
             Paragraph title = new Paragraph(titleChunk);
             title.setAlignment(Element.ALIGN_CENTER);
+            title.setLeading(20f); // Adjust space before title
+            title.setSpacingBefore(20f); // Adjust space before title
+            title.setSpacingAfter(30f);
             document.add(title);
 
            
-            document.add(new Paragraph(" "));
+            // document.add(new Paragraph(" "));
+
+            if (user.getPhoto() != null) {
+                byte[] photoBytes = user.getPhoto();
+                Image photoImage = Image.getInstance(photoBytes);
+                photoImage.scaleToFit(100, 100); // Adjust size to passport size
+                photoImage.setAbsolutePosition((pagesSize.getWidth() - 90) / 2, pagesSize.getHeight() - 170); // Position below the title
+                document.add(photoImage);
+                document.add(new Paragraph(" ")); // Add some space below the photo
+                document.add(new Paragraph(" ")); // Add some space below the photo
+                document.add(new Paragraph(" ")); // Add some space below the photo
+                document.add(new Paragraph(" ")); // Add some space below the photo
+                document.add(new Paragraph(" ")); // Add some space below the photo
+            }
 
              // Add user details
             Font boldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
@@ -200,6 +236,7 @@ public class RegistServiceImpl implements RegistService {
 
             // Add the table to the document
             document.add(table);
+           
             document.close();
             } catch (DocumentException e) {
                 throw new Exception("Error while generating PDF", e);
