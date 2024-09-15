@@ -38,14 +38,15 @@ public class RegistController {
     @PostMapping("/register")
     public ResponseEntity<RegistDto> registerDetail(  @RequestPart("registDto") RegistDto registDto, 
         @RequestPart(value = "photo", required = false) MultipartFile photo)  {
-            try {
+            // try {
                 RegistDto result = registService.registerDetail(registDto, photo);
                 return new ResponseEntity<>(result, HttpStatus.CREATED);
-            } catch (Exception e) {
+            // } catch (Exception e) {
                 // Log the exception (this is important for debugging)
                 // logger.error("Error during registration", e);
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }    }
+            //     return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            // }  
+          }
 
     @GetMapping("/detail/{mobileNo}")
     public  ResponseEntity<List<RegistDto>> findByMobileNo(@PathVariable String mobileNo) {
