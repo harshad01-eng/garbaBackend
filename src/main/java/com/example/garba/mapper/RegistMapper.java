@@ -35,7 +35,8 @@ public class RegistMapper {
             registration.getAddress(),
             registration.getRegsNo(),
             registration.getPayment(),
-            registration.getPhoto()
+            // registration.getPhoto()
+            null
         );
         return registDto;
     }

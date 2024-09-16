@@ -217,7 +217,7 @@ public class RegistServiceImpl implements RegistService {
             addAlignedTableCell(table, "Age: ", boldFont, Element.ALIGN_RIGHT,false);
             addAlignedTableCell(table, String.valueOf(user.getAge()), regularFont, Element.ALIGN_LEFT,true);
 
-            addAlignedTableCell(table, "Gender: ", boldFont, Element.ALIGN_RIGHT,false);
+            addAlignedTableCell(table, "Category: ", boldFont, Element.ALIGN_RIGHT,false);
             addAlignedTableCell(table, String.valueOf(user.getGender()), regularFont, Element.ALIGN_LEFT,true);
 
             addAlignedTableCell(table, "Batch Time: ", boldFont, Element.ALIGN_RIGHT,false);
