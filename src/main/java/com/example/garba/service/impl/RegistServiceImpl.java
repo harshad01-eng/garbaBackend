@@ -150,7 +150,7 @@ public class RegistServiceImpl implements RegistService {
             canvas.rectangle(0, 0, pagesSize.getWidth(), pagesSize.getHeight());
             canvas.fill();
                  PdfGState gs = new PdfGState();
-        gs.setFillOpacity(0.4f); // Set opacity (0.1 is very transparent, 1.0 is fully opaque)
+        gs.setFillOpacity(0.2f); // Set opacity (0.1 is very transparent, 1.0 is fully opaque)
         canvas.setGState(gs);
             Image watermark = Image.getInstance("src/assets/udaanLogo.png");
             watermark.setAbsolutePosition(0, 80); // Position the image
