@@ -264,9 +264,15 @@ public class RegistServiceImpl implements RegistService {
 
         PdfPCell cell = new PdfPCell();
 
-        if("paid".equalsIgnoreCase(payment)){
+        if("solo".equalsIgnoreCase(payment)){
             cell.setPhrase(new Phrase("Active",buttonFont));
             cell.setBackgroundColor(BaseColor.GREEN);
+        }else if("group".equalsIgnoreCase(payment)){
+            cell.setPhrase(new Phrase("Active",new Font(Font.FontFamily.HELVETICA, 15, Font.BOLD, BaseColor.BLACK)));
+            cell.setBackgroundColor(BaseColor.YELLOW);
+        }else if("kids".equalsIgnoreCase(payment)){
+            cell.setPhrase(new Phrase("Active",buttonFont));
+            cell.setBackgroundColor(BaseColor.BLUE);
         }else {
             cell.setPhrase(new Phrase("Disable",buttonFont));
             cell.setBackgroundColor(BaseColor.RED);
