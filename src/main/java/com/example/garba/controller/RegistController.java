@@ -68,9 +68,9 @@ public class RegistController {
         }
     }
 
-    @GetMapping("/gridData")
-    public ResponseEntity<List<RegistDto>> getAllData() {
-        List<RegistDto> registDtos = registService.getAllData();
+    @GetMapping("/gridData/{category}")
+    public ResponseEntity<List<RegistDto>> getAllData(@PathVariable String category) {
+        List<RegistDto> registDtos = registService.getAllData(category);
 
         if (registDtos.isEmpty()) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);

@@ -95,9 +95,9 @@ public class RegistServiceImpl implements RegistService {
     }
 
     @Override
-    public List<RegistDto> getAllData() {
+    public List<RegistDto> getAllData(String category) {
         try{
-        List<Registration> registrations = registRepository.findAll();
+        List<Registration> registrations = registRepository.findByGender(category);
 
         return registrations.stream().map(RegistMapper:: mapToRegistDto)
                                     .collect(Collectors.toList());

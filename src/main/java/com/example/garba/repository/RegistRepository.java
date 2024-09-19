@@ -12,4 +12,5 @@ public interface RegistRepository extends JpaRepository<Registration, Long> {
 
     boolean existsByMobileNo(String mobileNo);
 
+    List<Registration> findByGender(String gender);
 }
