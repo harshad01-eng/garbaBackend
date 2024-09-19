@@ -97,10 +97,19 @@ public class RegistServiceImpl implements RegistService {
     @Override
     public List<RegistDto> getAllData(String category) {
         try{
-        List<Registration> registrations = registRepository.findByGender(category);
+            if("allData".equalsIgnoreCase(category)){
+                List<Registration> registrations = registRepository.findAll();
+                return registrations.stream().map(RegistMapper:: mapToRegistDto)
+                .collect(Collectors.toList());
+            }
+            else{
+                List<Registration> registrations = registRepository.findByGender(category);
+                return registrations.stream().map(RegistMapper:: mapToRegistDto)
+                .collect(Collectors.toList());
 
-        return registrations.stream().map(RegistMapper:: mapToRegistDto)
-                                    .collect(Collectors.toList());
+            }
+
+       
         }catch(Exception e){
             throw new RuntimeException("An unexpected error occurred while processing your request", e);
         }
